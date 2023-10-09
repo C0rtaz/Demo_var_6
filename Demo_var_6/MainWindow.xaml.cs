@@ -23,12 +23,14 @@ namespace Demo_var_6
         public MainWindow()
         {
             InitializeComponent();
-            await LoginFormOpener();
+            
+            LoginFormOpener();
         }
 
-         static async Task LoginFormOpener() {
+         public void LoginFormOpener() {
             Forms.Login login = new Forms.Login();
-            await Task.Run(()=>login.ShowDialog());
+            
+            login.ShowDialog();
         }
     }
 }
