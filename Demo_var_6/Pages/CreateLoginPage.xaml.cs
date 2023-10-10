@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Demo_var_6.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,29 +28,73 @@ namespace Demo_var_6.Pages
         }
 
         private void Init() {
-            Grid myGrid = new Grid();
+            Grid myGrid = new Grid() {
+                Name = "MainGrid"
+            };
+            IDatabaseService.Login = "Гость";
+            IDatabaseService.Role = "Гость";
             CreateColumn(myGrid);
             CreateRows(myGrid);
             CreateLabel(myGrid);
             CreateTextBox(myGrid);
             CreateButton(myGrid);
-            this.Content = myGrid;
+            Content = myGrid;
         }
 
 
         private void CreateButton(Grid grid)
         {
-            Button myButton = new Button() {
+            Button ButtonLogin = new Button() {
                 Content = "Войти",
                 FontSize = 14,
                 Width = 100,
                 Height = 30,
             };
-            grid.Children.Add(myButton);
-            Grid.SetColumn(myButton,1);
-            Grid.SetRow(myButton, 3);
+
+            Button buttonGuest = new Button() {
+                Content = "Войти как гость",
+                FontSize = 14,
+                Width = 150,
+                Height = 30,
+                
+            };
+            grid.Children.Add(buttonGuest);
+            grid.Children.Add(ButtonLogin);
+            buttonGuest.Click += (sender, e) =>
+            {
+                Window parentWindow = Window.GetWindow(this);
+                parentWindow.Close();
+            };
+
+            ButtonLogin.Click += (sender, e) =>
+            {
+                TextBox? loginBox = LogicalTreeHelper.FindLogicalNode(grid, "loginBox") as TextBox;
+                PasswordBox? passBox = LogicalTreeHelper.FindLogicalNode(grid, "passBox") as PasswordBox;
+                if (!(loginBox != null && passBox != null) || string.IsNullOrEmpty(loginBox.Text) || string.IsNullOrEmpty(passBox.Password))
+                {
+                    MessageBox.Show("Пожалуйста, заполните поля или зайдите как гость.");
+                    return;
+                }
+                if (DataBase.loginChecker(loginBox.Text, passBox.Password))
+                {
+                    IDatabaseService.Login = loginBox.Text;
+                    Window parentWindow = Window.GetWindow(this);
+                    parentWindow.Close();
+                }
+                else {
+                    MessageBox.Show("Неверный логин или пароль.");
+                    return;
+                }
+            };
+
+
+            Grid.SetRow(buttonGuest, 3);
+            Grid.SetColumn(ButtonLogin, 1);
+            Grid.SetRow(ButtonLogin, 3);
 
         }
+
+        
 
         private void CreateTextBox(Grid grid) {
             TextBox textBoxLogin = new TextBox() {
@@ -106,7 +151,7 @@ namespace Demo_var_6.Pages
                 
             };
 
-
+            
 
             grid.Children.Add(labelPassword);
             grid.Children.Add(labelLogin);

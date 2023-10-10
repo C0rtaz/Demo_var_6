@@ -23,14 +23,18 @@ namespace Demo_var_6
         public MainWindow()
         {
             InitializeComponent();
-            
             LoginFormOpener();
+            NavPanel();
         }
 
          public void LoginFormOpener() {
             Forms.Login login = new Forms.Login();
-            
             login.ShowDialog();
+         }
+
+        public void NavPanel() {
+            Pages.CreateMainFilter filter = new Pages.CreateMainFilter();
+            Content = filter;
         }
     }
 }
