@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Demo_var_6.Pages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -24,17 +25,20 @@ namespace Demo_var_6
         {
             InitializeComponent();
             LoginFormOpener();
-            NavPanel();
+            Page();
         }
 
          public void LoginFormOpener() {
             Forms.Login login = new Forms.Login();
             login.ShowDialog();
+  
          }
 
-        public void NavPanel() {
-            Pages.CreateMainFilter filter = new Pages.CreateMainFilter();
-            Content = filter;
+        public void Page() {
+            /*PanelProducts panelProducts = new PanelProducts();
+            Content = panelProducts;*/
+            CreateMainFilter mainpage = new CreateMainFilter();
+            Content = mainpage;
         }
     }
 }

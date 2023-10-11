@@ -14,7 +14,8 @@ namespace Demo_var_6.Classes
     {
         struct Product
         {
-            public string id, name, unit, price, manufacturer, provider, category, sale, quantity, description, image;
+            public string id, name, unit, manufacturer, provider, category, sale, quantity, description, image;
+            public double price;
         };
 
         public static string? Login { get; set; }
@@ -22,7 +23,7 @@ namespace Demo_var_6.Classes
 
         public static string? Name { get; set; }
 
-        public static string connectionString = "Data Source=DESKTOP-36G6NKF;Initial Catalog = DemoEx; Integrated Security = True";
+        public static string connectionString = "Data Source=DBSRV\\AG2022;Initial Catalog=LoginDemoEx;Integrated Security=True";
 
         public static List<Product>? products;
 

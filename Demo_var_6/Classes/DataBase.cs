@@ -76,14 +76,14 @@ namespace Demo_var_6.Classes
                     id = reader.GetString(0),
                     name = reader.GetString(1),
                     unit = reader.GetString(2),
-                    price = reader.GetString(3),
+                    price = Decimal.ToDouble(reader.GetDecimal(3)),
                     manufacturer = reader.GetString(5),
                     provider = reader.GetString(6),
                     category = reader.GetString(7),
-                    sale = reader.GetString(8),
-                    quantity = reader.GetString(9),
+                    sale = reader.GetInt32(8).ToString(),
+                    quantity = reader.GetInt32(9).ToString(),
                     description = reader.GetString(10),
-                    image = reader.GetString(11)
+                   // image = reader.GetString(11)
                 };
                 products.Add(product);
             }
@@ -93,7 +93,7 @@ namespace Demo_var_6.Classes
 
         private static string CreateQueryFilter() {
             string query = "select * from Login.Товар", querySub = " where ", queryFilter = "";
-
+            if (IDatabaseService.queryFilter == null) return query;
             foreach (KeyValuePair<string, string> kvp in IDatabaseService.queryFilter)
             {
                 if (kvp.Value != "") queryFilter += querySub;
@@ -102,7 +102,7 @@ namespace Demo_var_6.Classes
             }
 
 
-            return query;
+            return query + queryFilter;
         } 
 
         

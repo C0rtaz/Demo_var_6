@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Demo_var_6.Classes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,20 +24,116 @@ namespace Demo_var_6.Pages
         public PanelProducts()
         {
             InitializeComponent();
+            Init();
         }
 
         private void Init()
         {
-            ScrollViewer scrollViewer = new ScrollViewer();
-            Window parentWindow = Window.GetWindow(this);
-            parentWindow.Content = scrollViewer;
+            IDatabaseService.products = DataBase.ProductData();
+            ScrollViewer scrollViewer = new ScrollViewer() {
 
-            Grid grid = new Grid() {
-                HorizontalAlignment = HorizontalAlignment.Stretch,
-                Height = 150,
+            };
+            Grid parentGrid = new Grid() {
+                Margin = new Thickness(20),
+            };
+            scrollViewer.Content = parentGrid;
+            foreach (IDatabaseService.Product product in IDatabaseService.products) {
+                Grid grid = new Grid()
+                {
+                    Margin = new Thickness(20),
+                    HorizontalAlignment = HorizontalAlignment.Stretch,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Height = 150,
+                };
+                CreateItem(grid, product);
+                parentGrid.Children.Add(grid);
+            }
+            Content = parentGrid;
+        }
+
+        private void CreateItem(Grid grid, IDatabaseService.Product product) {
+            Grid imgGrid = new Grid() { 
+                Margin = new Thickness(20),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
             };
 
+            Grid infoGrid = new Grid()
+            {
+                Margin = new Thickness(20),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
 
+            };
+
+            Grid quantityGrid = new Grid() {
+                Margin = new Thickness(20),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+
+            infoGrid.Children.Add(InfoForGrid(product));
+            quantityGrid.Children.Add(QuantityInfoForGrid(product));
+
+            grid.Children.Add(imgGrid);
+            grid.Children.Add(infoGrid);
+            grid.Children.Add(quantityGrid);
         }
+
+
+        private Grid QuantityInfoForGrid(IDatabaseService.Product product) {
+            Label label = new Label() {
+                FontSize = 14,
+                Content = product.quantity
+            };
+            Grid grid = new Grid()
+            {
+                Margin = new Thickness(10),
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+
+            };
+            grid.Children.Add(label);
+            return grid;
+        }
+
+        private ScrollViewer InfoForGrid(IDatabaseService.Product product) {
+            ScrollViewer scrollViewer = new ScrollViewer();
+            Grid grid = new Grid
+            {
+                Margin = new Thickness(10),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+
+            };
+            Label labelName = new Label() {
+                FontSize = 14,
+                Content = product.name,
+                FontWeight = FontWeights.Bold,
+            };
+            Label labelDesc = new Label() {
+                FontSize = 14,
+                Content = product.description,
+            };
+            Label labelManuf = new Label() {
+                FontSize = 14,
+                Content = "Производитель: " + product.manufacturer,
+            };
+            Label labelPrice = new Label()
+            {
+                FontSize = 14,
+                Content = "Цена: " + product.price,
+            };
+            grid.Children.Add(labelName);
+            grid.Children.Add(labelDesc);
+            grid.Children.Add(labelManuf);
+            grid.Children.Add(labelPrice);
+
+            scrollViewer.Content = grid;
+
+            return scrollViewer;
+        }
+
+
     }
 }

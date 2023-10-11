@@ -30,7 +30,9 @@ namespace Demo_var_6.Pages
         private void Init() {
             Grid grid = new Grid();
             CreateTable(grid);
-            
+            PanelProducts panelProducts = new PanelProducts();
+            grid.Children.Add(panelProducts);
+            Grid.SetRow(panelProducts, 1);
             Content = grid;
         }
 
@@ -87,8 +89,8 @@ namespace Demo_var_6.Pages
             };
             grid.RowDefinitions.Add(rowDefinition1);
             grid.RowDefinitions.Add(rowDefinition2);
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
+            grid.ColumnDefinitions.Add(columnDefinition1);
+            grid.ColumnDefinitions.Add(columnDefinition2);
 
         }
     }
