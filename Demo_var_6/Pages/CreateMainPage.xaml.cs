@@ -32,8 +32,22 @@ namespace Demo_var_6.Pages
             CreateTable(grid);
             PanelProducts panelProducts = new PanelProducts();
             grid.Children.Add(panelProducts);
+            Label label = CreateGreetings();
+            grid.Children.Add((Label)label);
+            Grid.SetRow(label, 0);
             Grid.SetRow(panelProducts, 1);
             Content = grid;
+        }
+
+
+        private Label CreateGreetings() {
+            Label greetingLabel = new Label() {
+                Content = "Здраствуйте, " + IDatabaseService.Name,
+                FontSize = 16,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+            };
+            return greetingLabel;
         }
 
 

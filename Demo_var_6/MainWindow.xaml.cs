@@ -23,15 +23,16 @@ namespace Demo_var_6
     {
         public MainWindow()
         {
-            InitializeComponent();
             LoginFormOpener();
+            InitializeComponent();
+            
             Page();
         }
 
          public void LoginFormOpener() {
             Forms.Login login = new Forms.Login();
             login.ShowDialog();
-  
+
          }
 
         public void Page() {

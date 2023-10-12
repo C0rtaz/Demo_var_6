@@ -29,6 +29,7 @@ namespace Demo_var_6.Pages
 
         private void Init()
         {
+            int i = 0;
             IDatabaseService.products = DataBase.ProductData();
             ScrollViewer scrollViewer = new ScrollViewer() {
 
@@ -38,6 +39,9 @@ namespace Demo_var_6.Pages
             };
             scrollViewer.Content = parentGrid;
             foreach (IDatabaseService.Product product in IDatabaseService.products) {
+                RowDefinition rowDefinition = new RowDefinition() {
+                    
+                };
                 Grid grid = new Grid()
                 {
                     Margin = new Thickness(20),
@@ -45,7 +49,9 @@ namespace Demo_var_6.Pages
                     VerticalAlignment = VerticalAlignment.Center,
                     Height = 150,
                 };
+                parentGrid.RowDefinitions.Add(rowDefinition);
                 CreateItem(grid, product);
+                Grid.SetRow(grid, ++i);
                 parentGrid.Children.Add(grid);
             }
             Content = parentGrid;
