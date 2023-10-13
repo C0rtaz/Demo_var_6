@@ -10,7 +10,7 @@ namespace Demo_var_6.Classes
 {
     internal class DataBase : IDatabaseService
     {
-        static SqlConnection connectionDB = new SqlConnection(IDatabaseService.connectionString);
+        
 
         public static bool loginChecker(string login, string pass) {
             string query = $"SELECT COUNT(*) FROM Login.Пользователь WHERE Логин='{login}' AND Пароль='{pass}'";
@@ -119,8 +119,34 @@ namespace Demo_var_6.Classes
 
 
             return query + queryFilter;
-        } 
+        }
 
+        public static List<string> SearchUniqItems(string columnName) {
+            List <string> items = new List<string>();
+            string query = $"SELECT DISTINCT {columnName} from Login.Товар";
+            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString)) {
+                SqlCommand cmd = new SqlCommand(query, connection);
+                SqlDataReader reader = cmd.ExecuteReader();
+                while (reader.Read())
+                {
+                    switch (columnName) {
+                        case "Стоимость":
+                            items.Add((Decimal.ToDouble(reader.GetDecimal(0))).ToString());
+                            break;
+                        case "Скидка":
+                            items.Add(reader.GetInt32(0).ToString());
+                            break;
+                        case "[Кол-во на складе]":
+                            items.Add(reader.GetInt32(0).ToString());
+                            break;
+                        default:
+                            items.Add(reader.GetString(0));
+                            break;
+                    }
+                }
+            }
+            return items;
+        }
 
     }
 }

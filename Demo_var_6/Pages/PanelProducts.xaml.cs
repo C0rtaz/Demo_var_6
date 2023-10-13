@@ -29,113 +29,169 @@ namespace Demo_var_6.Pages
 
         private void Init()
         {
-            int i = 0;
             IDatabaseService.products = DataBase.ProductData();
-            ScrollViewer scrollViewer = new ScrollViewer() {
+            ScrollViewer scrollViewer = new ScrollViewer();
+            Grid parentGrid = new Grid();
 
-            };
-            Grid parentGrid = new Grid() {
-                Margin = new Thickness(20),
-            };
             scrollViewer.Content = parentGrid;
-            foreach (IDatabaseService.Product product in IDatabaseService.products) {
-                RowDefinition rowDefinition = new RowDefinition() {
-                    
+
+            foreach (IDatabaseService.Product product in IDatabaseService.products)
+            {
+                RowDefinition rowDefinition = new RowDefinition()
+                {
+                    Height = new GridLength(80),
+                    Name = $"rowDefinition{parentGrid.RowDefinitions.Count}",
                 };
+                parentGrid.RowDefinitions.Add(rowDefinition);
+                Border border = new Border() {
+                    BorderBrush = Brushes.Black,
+                    BorderThickness = new Thickness(2),
+                    Background = int.Parse(product.quantity) == 0 ? Brushes.LightGray : Brushes.White,
+                };
+
                 Grid grid = new Grid()
                 {
-                    Margin = new Thickness(20),
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Center,
                     Height = 150,
+                    
                 };
-                parentGrid.RowDefinitions.Add(rowDefinition);
+
+                border.Child = grid;
                 CreateItem(grid, product);
-                Grid.SetRow(grid, ++i);
-                parentGrid.Children.Add(grid);
+                parentGrid.Children.Add(border);
+                Grid.SetRow(border, parentGrid.RowDefinitions.Count - 1);
             }
-            Content = parentGrid;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            Content = scrollViewer;
         }
 
-        private void CreateItem(Grid grid, IDatabaseService.Product product) {
-            Grid imgGrid = new Grid() { 
-                Margin = new Thickness(20),
-                HorizontalAlignment = HorizontalAlignment.Center,
+
+        private void CreateItem(Grid grid, IDatabaseService.Product product)
+        {
+            /*Border border = new Border()
+            {
+                BorderBrush = Brushes.Black,
+                BorderThickness = new Thickness(2),
+                Background = int.Parse(product.quantity) == 0 ? Brushes.LightGray : Brushes.White,
+            };*/
+
+            Grid imgGrid = new Grid()
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
+                Width = 300
             };
 
             Grid infoGrid = new Grid()
             {
-                Margin = new Thickness(20),
                 HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Width = 300
 
             };
 
-            Grid quantityGrid = new Grid() {
-                Margin = new Thickness(20),
-                HorizontalAlignment = HorizontalAlignment.Center,
+            Grid quantityGrid = new Grid()
+            {
+                HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
+                Width = 300
             };
-
+            //border.Child = imgGrid;
             infoGrid.Children.Add(InfoForGrid(product));
             quantityGrid.Children.Add(QuantityInfoForGrid(product));
-
+            
             grid.Children.Add(imgGrid);
             grid.Children.Add(infoGrid);
             grid.Children.Add(quantityGrid);
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Star) });
+            Grid.SetColumn(imgGrid, 0);
+            Grid.SetColumn(infoGrid, 1);
+            Grid.SetColumn(quantityGrid, 2);
         }
 
 
-        private Grid QuantityInfoForGrid(IDatabaseService.Product product) {
+        private ScrollViewer QuantityInfoForGrid(IDatabaseService.Product product) {
+            ScrollViewer scrollViewer = new ScrollViewer();
             Label label = new Label() {
+                Margin = new Thickness(5, 0, 0, 0),
                 FontSize = 14,
-                Content = product.quantity
+                Content = "Количество: " + product.quantity,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
             };
             Grid grid = new Grid()
             {
                 Margin = new Thickness(10),
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
 
             };
             grid.Children.Add(label);
-            return grid;
+            scrollViewer.Content = grid;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
+            return scrollViewer;
         }
 
-        private ScrollViewer InfoForGrid(IDatabaseService.Product product) {
+        private ScrollViewer InfoForGrid(IDatabaseService.Product product)
+        {
             ScrollViewer scrollViewer = new ScrollViewer();
             Grid grid = new Grid
             {
-                Margin = new Thickness(10),
                 HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
 
             };
-            Label labelName = new Label() {
+            Label labelName = new Label()
+            {
+                Margin = new Thickness(0, 30, 0, 0),
                 FontSize = 14,
                 Content = product.name,
                 FontWeight = FontWeights.Bold,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
             };
-            Label labelDesc = new Label() {
+            TextBlock labelDesc = new TextBlock()
+            {
+                Margin = new Thickness(5),
                 FontSize = 14,
-                Content = product.description,
+                Text = product.description,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                TextWrapping = TextWrapping.Wrap,
             };
-            Label labelManuf = new Label() {
+            Label labelManuf = new Label()
+            {
+                Margin = new Thickness(5),
                 FontSize = 14,
                 Content = "Производитель: " + product.manufacturer,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
             };
             Label labelPrice = new Label()
             {
+                Margin = new Thickness(5),
                 FontSize = 14,
                 Content = "Цена: " + product.price,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
             };
             grid.Children.Add(labelName);
             grid.Children.Add(labelDesc);
             grid.Children.Add(labelManuf);
             grid.Children.Add(labelPrice);
-
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(10, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(70, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(10, GridUnitType.Star) });
+            grid.RowDefinitions.Add(new RowDefinition() { Height = new GridLength(10, GridUnitType.Star) });
+            Grid.SetRow(labelName, 0);
+            Grid.SetRow(labelDesc, 1);
+            Grid.SetRow(labelManuf, 2);
+            Grid.SetRow(labelPrice, 3);
             scrollViewer.Content = grid;
+            scrollViewer.VerticalScrollBarVisibility = ScrollBarVisibility.Auto;
 
             return scrollViewer;
         }

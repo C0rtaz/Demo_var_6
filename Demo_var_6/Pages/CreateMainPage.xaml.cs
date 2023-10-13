@@ -65,15 +65,15 @@ namespace Demo_var_6.Pages
                 comboBox.Items.Add(new ComboBoxItem() { Content = s});
             }
 
-            TextBox textBox = new TextBox() {
+            ComboBox comboBoxFilt = new ComboBox()
+            {
                 Width = 100,
                 Height = 50,
                 FontSize = 16,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center
+
             };
-
-
             Button button = new Button() {
                 Width = 100,
                 Height = 50,
@@ -83,7 +83,7 @@ namespace Demo_var_6.Pages
 
             };
         }
-
+        +
         private void CreateTable(Grid grid) {
             RowDefinition rowDefinition1 = new RowDefinition()
             {
