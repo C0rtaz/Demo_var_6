@@ -21,19 +21,26 @@ namespace Demo_var_6.Pages
     /// </summary>
     public partial class PanelProducts : UserControl
     {
+        ScrollViewer scrollViewer = new ScrollViewer();
+        Grid parentGrid = new Grid();
         public PanelProducts()
         {
             InitializeComponent();
-            Init();
+            scrollViewer.Content = parentGrid;
+            Init(parentGrid);
         }
 
-        private void Init()
+        public void Render() {
+            parentGrid.Children.Clear();
+            while (parentGrid.RowDefinitions.Count != 0) {
+                parentGrid.RowDefinitions.RemoveAt(0);
+            }
+            Init(parentGrid);
+        }
+
+        private void Init(Grid parentGrid)
         {
             IDatabaseService.products = DataBase.ProductData();
-            ScrollViewer scrollViewer = new ScrollViewer();
-            Grid parentGrid = new Grid();
-
-            scrollViewer.Content = parentGrid;
 
             foreach (IDatabaseService.Product product in IDatabaseService.products)
             {
@@ -54,9 +61,18 @@ namespace Demo_var_6.Pages
                     HorizontalAlignment = HorizontalAlignment.Stretch,
                     VerticalAlignment = VerticalAlignment.Center,
                     Height = 150,
-                    
+                    Name = $"grid{parentGrid.RowDefinitions.Count - 1}"
+                };
+                RadioButton radioButton = new RadioButton()
+                {
+                    Margin = new Thickness(5),
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    VerticalAlignment = VerticalAlignment.Center,
+                    Name = $"rb{parentGrid.RowDefinitions.Count - 1}",
+                    GroupName = "Products"
                 };
 
+                grid.Children.Add(radioButton);
                 border.Child = grid;
                 CreateItem(grid, product);
                 parentGrid.Children.Add(border);
@@ -66,21 +82,17 @@ namespace Demo_var_6.Pages
             Content = scrollViewer;
         }
 
+        
 
         private void CreateItem(Grid grid, IDatabaseService.Product product)
         {
-            /*Border border = new Border()
-            {
-                BorderBrush = Brushes.Black,
-                BorderThickness = new Thickness(2),
-                Background = int.Parse(product.quantity) == 0 ? Brushes.LightGray : Brushes.White,
-            };*/
+
 
             Grid imgGrid = new Grid()
             {
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Center,
-                Width = 300
+                Height = 75,
             };
 
             Grid infoGrid = new Grid()
@@ -97,14 +109,16 @@ namespace Demo_var_6.Pages
                 VerticalAlignment = VerticalAlignment.Center,
                 Width = 300
             };
-            //border.Child = imgGrid;
+
+            
+            imgGrid.Children.Add(ImageCreator(product));
             infoGrid.Children.Add(InfoForGrid(product));
             quantityGrid.Children.Add(QuantityInfoForGrid(product));
             
             grid.Children.Add(imgGrid);
             grid.Children.Add(infoGrid);
             grid.Children.Add(quantityGrid);
-            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Star) });
+            grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(35, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(60, GridUnitType.Star) });
             grid.ColumnDefinitions.Add(new ColumnDefinition() { Width = new GridLength(25, GridUnitType.Star) });
             Grid.SetColumn(imgGrid, 0);
@@ -112,11 +126,15 @@ namespace Demo_var_6.Pages
             Grid.SetColumn(quantityGrid, 2);
         }
 
-
+        private Image ImageCreator(IDatabaseService.Product product) {
+            Image img = new Image();
+            img.Source = new BitmapImage(new Uri(product.image));
+            return img;
+        }
         private ScrollViewer QuantityInfoForGrid(IDatabaseService.Product product) {
             ScrollViewer scrollViewer = new ScrollViewer();
             Label label = new Label() {
-                Margin = new Thickness(5, 0, 0, 0),
+                //Margin = new Thickness(5, 0, 0, 0),
                 FontSize = 14,
                 Content = "Количество: " + product.quantity,
                 HorizontalAlignment = HorizontalAlignment.Left,
@@ -124,7 +142,7 @@ namespace Demo_var_6.Pages
             };
             Grid grid = new Grid()
             {
-                Margin = new Thickness(10),
+                //Margin = new Thickness(10),
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Top,
 

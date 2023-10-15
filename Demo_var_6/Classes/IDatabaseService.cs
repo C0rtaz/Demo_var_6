@@ -14,18 +14,29 @@ namespace Demo_var_6.Classes
     {
         struct Product
         {
-            public string id, name, unit, manufacturer, provider, category, sale, quantity, description, image;
+            public string id, name, unit, manufacturer, provider, category, sale, quantity, description, image, maxSale;
             public double price;
         };
 
+        public static string Name = "Гость";
         public static string? Login { get; set; }
         public static string? Role { get; set; }
 
-        public static string? Name { get; set; }
+        public static string defaultPathForDataImage = "Images/";
+
+        public static string defaultImage = "picture.png";
+
+        public static string defaultPath = "pack://application:,,,/Demo_var_6;component/Resources/";
+
+        public static string Sort = "";
+
+        public static string? manufacturerSort = "";
 
         public static string connectionString = "Data Source=DESKTOP-36G6NKF;Initial Catalog=DemoEx;Integrated Security=True";
 
         public static List<Product>? products;
+
+        public static Dictionary<string, string>? querySearch;
 
         public static Dictionary<string, string>? queryFilter;
 

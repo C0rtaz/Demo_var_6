@@ -21,6 +21,9 @@ namespace Demo_var_6.Pages
     /// </summary>
     public partial class CreateMainFilter : UserControl
     {
+        public PanelProducts panelProducts = new PanelProducts();
+
+        
         public CreateMainFilter()
         {
             InitializeComponent();
@@ -28,62 +31,156 @@ namespace Demo_var_6.Pages
         }
 
         private void Init() {
-            Grid grid = new Grid();
-            CreateTable(grid);
-            PanelProducts panelProducts = new PanelProducts();
-            grid.Children.Add(panelProducts);
+            Grid mainGrid = new Grid() { Name = "grid" };
+            CreateTable(mainGrid);
+            mainGrid.Children.Add(panelProducts);
             Label label = CreateGreetings();
-            grid.Children.Add((Label)label);
+            CreateSearch(mainGrid);
+            CreateFilter(mainGrid);
+            mainGrid.Children.Add(label);
             Grid.SetRow(label, 0);
             Grid.SetRow(panelProducts, 1);
-            Content = grid;
+            Content = mainGrid;
         }
+
+
 
 
         private Label CreateGreetings() {
             Label greetingLabel = new Label() {
                 Content = "Здраствуйте, " + IDatabaseService.Name,
                 FontSize = 16,
-                HorizontalAlignment = HorizontalAlignment.Center,
-                VerticalAlignment = VerticalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
             };
             return greetingLabel;
         }
 
+        public void CreateSearch(Grid grid) {
+            ComboBox comboBox = new ComboBox()
+            {
+                Width = 160,
+                Height = 25,
+                FontSize = 16,
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Name = "searchComboBox",
+                
+            };
+            List<string> strings = DataBase.ColumnNameProducts();
+            IDatabaseService.querySearch = new Dictionary<string, string>(strings.Select(s => new KeyValuePair<string, string>(s, "")));
+            IDatabaseService.queryFilter = new Dictionary<string, string>(strings.Select(s => new KeyValuePair<string, string>(s, "")));
 
-        private void CreateFilter() {
-            ComboBox comboBox = new ComboBox() {
+            foreach (string s in strings)
+            {
+                comboBox.Items.Add(new ComboBoxItem() { Content = s });
+            }
+            TextBox textBox = new TextBox() {
+                Text = "Введите текст для поиска",
+                FontSize = 16,
+                Height = 25,
+                Width = 160,
+                Margin = new Thickness(170, 0,0,0),
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Top,
+                Name ="txtBoxSearch"
+            };
+            textBox.TextChanged += TextCh;
+            grid.Children.Add(comboBox);
+            grid.Children.Add(textBox);
+        }
+
+        private void TextCh(object sender, EventArgs e)
+        {
+            TextBox textBox = sender as TextBox;
+            if (textBox == null) return;
+
+            Grid parentGrid = textBox.Parent as Grid;
+            if (parentGrid == null) return;
+
+            ComboBox comboBox = FindChild<ComboBox>(parentGrid, "searchComboBox");
+            if (comboBox == null) return;
+            ComboBoxItem selectedItem = (ComboBoxItem)comboBox.SelectedItem;
+            if (selectedItem == null) return;
+            string? key = "[" + selectedItem.Content.ToString() + "]";
+            if (key == null) return;
+
+            string? value;
+            if (IDatabaseService.querySearch == null)
+            {
+                return;
+            }
+            if (IDatabaseService.querySearch.TryGetValue(key, out value) && !string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(textBox.Text))
+            {
+                IDatabaseService.querySearch[key] = textBox.Text;
+            }
+            else
+            {
+                IDatabaseService.querySearch.Add(key, textBox.Text);
+            }
+
+            panelProducts.Render();
+        }
+
+        private T FindChild<T>(DependencyObject parent, string childName) where T : DependencyObject
+        {
+            if (parent == null) return null;
+
+            int childrenCount = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < childrenCount; i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T && ((FrameworkElement)child).Name == childName)
+                {
+                    return (T)child;
+                }
+                
+            }
+
+            return null;
+        }
+        private void CreateFilter(Grid grid) {
+            ComboBox comboBoxPrice = new ComboBox() {
                 Width = 100,
                 Height = 50,
                 FontSize = 16,
                 HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = VerticalAlignment.Bottom
             };
-            List<string> strings = DataBase.ColumnNameProducts();
-            foreach(string s in strings)
-            {
-                comboBox.Items.Add(new ComboBoxItem() { Content = s});
-            }
+            comboBoxPrice.Items.Add("Возрастанию");
+            comboBoxPrice.Items.Add("Убыванию");
+
+            comboBoxPrice.SelectionChanged += (sender, e) => {
+                ComboBox? comboBox = sender as ComboBox;
+                if (comboBox == null) return;
+                IDatabaseService.Sort = comboBox.SelectedItem.ToString() == "Возрастанию" ? "asc" : "desc";
+                panelProducts.Render();
+            };
 
             ComboBox comboBoxFilt = new ComboBox()
             {
                 Width = 100,
                 Height = 50,
                 FontSize = 16,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Bottom
 
             };
-            Button button = new Button() {
-                Width = 100,
-                Height = 50,
-                FontSize = 16,
-                HorizontalAlignment = HorizontalAlignment.Left,
-                VerticalAlignment = VerticalAlignment.Center
-
+            List<string> strings = DataBase.SearchUniqItems("Произовдитель");
+            foreach (string s in strings) {
+                comboBoxFilt.Items.Add(s);
+            }
+            comboBoxPrice.SelectionChanged += (sender, e) => {
+                ComboBox? comboBox = sender as ComboBox;
+                if (comboBox == null) return;
+                IDatabaseService.manufacturerSort = comboBox.SelectedItem.ToString();
+                if (IDatabaseService.manufacturerSort == null) return;
+                panelProducts.Render();
             };
+            grid.Children.Add(comboBoxPrice);
+            grid.Children.Add(comboBoxFilt);
         }
-        +
+        
         private void CreateTable(Grid grid) {
             RowDefinition rowDefinition1 = new RowDefinition()
             {

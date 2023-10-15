@@ -21,6 +21,7 @@ namespace Demo_var_6
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static CreateMainFilter mainpage = new CreateMainFilter();
         public MainWindow()
         {
             LoginFormOpener();
@@ -36,9 +37,6 @@ namespace Demo_var_6
          }
 
         public void Page() {
-            /*PanelProducts panelProducts = new PanelProducts();
-            Content = panelProducts;*/
-            CreateMainFilter mainpage = new CreateMainFilter();
             Content = mainpage;
         }
     }

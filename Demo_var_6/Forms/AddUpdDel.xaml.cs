@@ -15,16 +15,13 @@ using System.Windows.Shapes;
 namespace Demo_var_6.Forms
 {
     /// <summary>
-    /// Логика взаимодействия для Login.xaml
+    /// Логика взаимодействия для AddUpdDel.xaml
     /// </summary>
-    public partial class Login : Window
+    public partial class AddUpdDel : Window
     {
-        public Login()
+        public AddUpdDel()
         {
             InitializeComponent();
-            Pages.CreateLoginPage page = new Pages.CreateLoginPage();
-            Content = page;
         }
     }
 }
-

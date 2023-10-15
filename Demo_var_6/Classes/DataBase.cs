@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
+using System.Windows.Shapes;
 
 namespace Demo_var_6.Classes
 {
@@ -92,13 +93,14 @@ namespace Demo_var_6.Classes
                         name = reader.GetString(1),
                         unit = reader.GetString(2),
                         price = Decimal.ToDouble(reader.GetDecimal(3)),
+                        maxSale = reader.GetInt32(4).ToString(),
                         manufacturer = reader.GetString(5),
                         provider = reader.GetString(6),
                         category = reader.GetString(7),
                         sale = reader.GetInt32(8).ToString(),
                         quantity = reader.GetInt32(9).ToString(),
                         description = reader.GetString(10),
-                        // image = reader.GetString(11)
+                        image = reader.IsDBNull(11) ? IDatabaseService.defaultPath + IDatabaseService.defaultImage : IDatabaseService.defaultPath + IDatabaseService.defaultPathForDataImage + reader.GetString(11)
                     };
                     products.Add(product);
                 }
@@ -112,13 +114,67 @@ namespace Demo_var_6.Classes
             if (IDatabaseService.queryFilter == null) return query;
             foreach (KeyValuePair<string, string> kvp in IDatabaseService.queryFilter)
             {
-                if (kvp.Value != "") queryFilter += querySub;
-                queryFilter += $" {kvp.Key} = '{kvp.Value}' ";
+                if (kvp.Value != null && kvp.Value != "")
+                {
+                    queryFilter += querySub;
+                    queryFilter += $" {kvp.Key} = '{kvp.Value}' ";
+                }
                 if (queryFilter.Contains("where")) querySub = "and";
             }
 
 
-            return query + queryFilter;
+            return query + queryFilter + ManufacturerQuery(queryFilter) + QuerySearch(queryFilter) + SortingQuery();
+        }
+
+        private static string ManufacturerQuery(string queryFilter) {
+            string? query = IDatabaseService.manufacturerSort, querySub = " where ", queryMan = " Производитель = ";
+            IDatabaseService.manufacturerSort = "";
+            if (query != "") return "";
+            if (queryFilter.Contains("where"))
+            {
+                return " and "  + queryMan + query;
+            }
+            else {
+                return querySub + queryMan + query;
+            }
+            return "";
+        }
+
+        private static string SortingQuery() {
+            string querySub = " order by Стоимость ", query = IDatabaseService.Sort;
+            IDatabaseService.Sort = "";
+            if (query == "") return "";
+            return querySub + query;
+        }
+
+        private static string QuerySearch(string queryFilter) {
+            string query = "", querySub = " where ";
+            if (IDatabaseService.querySearch == null) return query;
+            foreach (KeyValuePair<string, string> kvp in IDatabaseService.querySearch)
+            {
+                
+                if (kvp.Value != null && kvp.Value != "")
+                {
+                    if (queryFilter.Contains("where")) querySub = "or";
+                    else {
+                        query += querySub;
+                    }
+                    if (query.Contains("like"))
+                    {
+                        query += querySub;
+                        query += $" {kvp.Key} like '%{kvp.Value}%' ";
+                    }
+                    else {
+                        if (queryFilter != "") { query += " and"; }
+                        query += " ( ";
+                        query += $" {kvp.Key} like '%{kvp.Value}%' ";
+                    }
+                }
+            }
+            if (query != "") {
+                query += ")";
+            }
+            return query;
         }
 
         public static List<string> SearchUniqItems(string columnName) {

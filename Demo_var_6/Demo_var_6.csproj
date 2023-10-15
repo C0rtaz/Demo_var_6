@@ -8,7 +8,39 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Resources\icon.ico" />
+    <None Remove="Resources\Images\E345R4.jpg" />
+    <None Remove="Resources\Images\E431R5.png" />
+    <None Remove="Resources\Images\E532Q5.jpg" />
+    <None Remove="Resources\Images\F432F4.jpg" />
+    <None Remove="Resources\Images\G345E4.jpg" />
+    <None Remove="Resources\Images\G453T5.jpg" />
+    <None Remove="Resources\Images\R356F4.jpg" />
+    <None Remove="Resources\Images\T432F4.jpg" />
+    <None Remove="Resources\Images\Y324F4.jpg" />
+    <None Remove="Resources\Images\А112Т4.png" />
+    <None Remove="Resources\logo.png" />
+    <None Remove="Resources\picture.png" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="System.Data.SqlClient" Version="4.8.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Resources\icon.ico" />
+    <Resource Include="Resources\Images\E345R4.jpg" />
+    <Resource Include="Resources\Images\E431R5.png" />
+    <Resource Include="Resources\Images\E532Q5.jpg" />
+    <Resource Include="Resources\Images\F432F4.jpg" />
+    <Resource Include="Resources\Images\G345E4.jpg" />
+    <Resource Include="Resources\Images\G453T5.jpg" />
+    <Resource Include="Resources\Images\R356F4.jpg" />
+    <Resource Include="Resources\Images\T432F4.jpg" />
+    <Resource Include="Resources\Images\Y324F4.jpg" />
+    <Resource Include="Resources\Images\А112Т4.png" />
+    <Resource Include="Resources\logo.png" />
+    <Resource Include="Resources\picture.png" />
   </ItemGroup>
 
 </Project>
