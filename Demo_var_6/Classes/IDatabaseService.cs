@@ -28,7 +28,11 @@ namespace Demo_var_6.Classes
 
         public static string defaultPath = "pack://application:,,,/Demo_var_6;component/Resources/";
 
-        public static string Sort = "";
+        public static bool AddUpd = false;
+
+        public static Product updProduct;
+
+       public static string Sort = "";
 
         public static string? manufacturerSort = "";
 

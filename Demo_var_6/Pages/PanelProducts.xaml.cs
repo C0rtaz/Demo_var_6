@@ -22,7 +22,7 @@ namespace Demo_var_6.Pages
     public partial class PanelProducts : UserControl
     {
         ScrollViewer scrollViewer = new ScrollViewer();
-        Grid parentGrid = new Grid();
+        public Grid parentGrid = new Grid();
         public PanelProducts()
         {
             InitializeComponent();
@@ -68,7 +68,7 @@ namespace Demo_var_6.Pages
                     Margin = new Thickness(5),
                     HorizontalAlignment = HorizontalAlignment.Right,
                     VerticalAlignment = VerticalAlignment.Center,
-                    Name = $"rb{parentGrid.RowDefinitions.Count - 1}",
+                    Name = $"r{(parentGrid.RowDefinitions.Count - 1)}",
                     GroupName = "Products"
                 };
 

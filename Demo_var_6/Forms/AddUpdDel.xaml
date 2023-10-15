@@ -7,6 +7,26 @@
         mc:Ignorable="d"
         Title="AddUpdDel" Height="450" Width="800">
     <Grid>
-        
+        <Label  Content="Артикул" FontSize="16" Width="70" Height="35" Margin="544,56,186,343"/>
+        <TextBox Name="IDBox" FontSize="16" Width="70" Height="25" Margin="650,56,80,353"/>
+        <Label Content="Наименование" FontSize="16" Height="35" Margin="493,86,186,313"/>
+        <TextBox   Name ="nameBox" FontSize="16" Width="70" Height="25" Margin="650,86,80,323"/>
+        <Label  Content="Ед. изм" FontSize="16" Width="70" Height="35" Margin="544,116,186,283"/>
+        <TextBox Name="UnitBox" FontSize="16" Width="70" Height="25" Margin="650,116,80,293"/>
+        <Label  Content="Стоимость" FontSize="16" Height="35" Margin="520,146,186,253"/>
+        <TextBox Name="CostBox" FontSize="16" Width="70" Height="25" Margin="650,146,80,263"/>
+        <Label Content="Производитель" FontSize="16" Height="35" Margin="476,176,186,223"/>
+        <TextBox Name="ManBox" FontSize="16" Width="70" Height="25" Margin="650,176,80,233"/>
+        <Label Content="Поставщик" FontSize="16" Height="35" Margin="520,210,186,189"/>
+        <TextBox Name="providerBox" FontSize="16" Width="70" Height="25" Margin="650,210,80,199"/>
+        <Label Content="Категория" FontSize="16" Height="35" Margin="520,240,186,159"/>
+        <TextBox Name="categoryBox" FontSize="16" Width="70" Height="25" Margin="650,240,80,169"/>
+        <Label Content="Кол-во на складе" FontSize="16" Height="35" Margin="476,270,186,129"/>
+        <TextBox Name="QuantityBox" FontSize="16" Width="70" Height="25" Margin="650,270,80,139"/>
+        <Label Content="Описание" FontSize="16" Height="35" Margin="265,187,450,212"/>
+        <TextBox Name ="DescBox" FontSize="16" Margin="204,227,374,99"/>
+        <Button Name="EventBrn" Height="35" Margin="592,374,80,25" Content="Добавить/Изменить" Click="EventBrn_Click"/>
+        <Button Click="OpenImage_Click" Name="imgBtn" Margin="24,223,634,176" Content="Изменить изображение"/>
+        <Image Name="img" Width="150" Height="200" Margin="20,16,630,218"/>
     </Grid>
 </Window>

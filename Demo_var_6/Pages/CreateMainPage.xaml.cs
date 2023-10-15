@@ -1,4 +1,5 @@
 ﻿using Demo_var_6.Classes;
+using Demo_var_6.Forms;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,15 +38,93 @@ namespace Demo_var_6.Pages
             Label label = CreateGreetings();
             CreateSearch(mainGrid);
             CreateFilter(mainGrid);
+            AddUpdDelButton(mainGrid);
             mainGrid.Children.Add(label);
             Grid.SetRow(label, 0);
             Grid.SetRow(panelProducts, 1);
             Content = mainGrid;
         }
 
+        private void AddUpdDelButton(Grid grid) {
+            Button Addbtn = new Button() {
+                Margin = new Thickness(0, 0, 0, 70),
+                Content = "Добавить",
+                FontSize = 14,
+                Width = 100,
+                Height = 30,
+            };
+            
+            Button Updbtn = new Button()
+            {
+                FontSize = 14,
+                Width = 100,
+                Height = 30,
+                Content = "Изменить"
+            };
 
+            Button Delbtn = new Button()
+            {
+                Margin = new Thickness(0, 70, 0, 0),
+                FontSize = 14,
+                Width = 100,
+                Height = 30,
+                Content = "Удалить"
+            };
 
+            Addbtn.Click += (sender, e) =>
+            {
 
+                IDatabaseService.AddUpd = true;
+
+                AddUpdDel form = new AddUpdDel();
+                form.ShowDialog();
+
+                IDatabaseService.AddUpd = false;
+                panelProducts.Render();
+            };
+
+            Updbtn.Click += (sender, e) =>
+            {
+                IDatabaseService.updProduct = IDatabaseService.products[int.Parse(SearchNameOfRadioButton())];
+                AddUpdDel form = new AddUpdDel();
+                form.ShowDialog();
+
+                panelProducts.Render();
+            };
+
+            Delbtn.Click += (sender, e) =>
+            {
+
+                DataBase.DelData(IDatabaseService.products[int.Parse(SearchNameOfRadioButton())]);
+                panelProducts.Render();
+            };
+
+            grid.Children.Add(Addbtn);
+            grid.Children.Add(Updbtn);
+            grid.Children.Add(Delbtn);
+
+            Grid.SetRow(Addbtn, 1);
+            Grid.SetRow(Updbtn, 1);
+            Grid.SetRow(Delbtn, 1);
+
+            Grid.SetColumn(Addbtn, 1);
+            Grid.SetColumn(Updbtn, 1);
+            Grid.SetColumn(Delbtn, 1);
+
+        }
+
+        private string SearchNameOfRadioButton() {
+            foreach (UIElement element in panelProducts.parentGrid.Children.)
+            {
+                if (element is RadioButton radioButton && radioButton.GroupName == "Products" && radioButton.IsChecked == true)
+                {
+
+                    return radioButton.Name.ToString().Substring(1);
+
+                }
+            }
+            return "";
+        }
         private Label CreateGreetings() {
             Label greetingLabel = new Label() {
                 Content = "Здраствуйте, " + IDatabaseService.Name,
@@ -142,7 +221,7 @@ namespace Demo_var_6.Pages
         private void CreateFilter(Grid grid) {
             ComboBox comboBoxPrice = new ComboBox() {
                 Width = 100,
-                Height = 50,
+                Height = 25,
                 FontSize = 16,
                 HorizontalAlignment = HorizontalAlignment.Left,
                 VerticalAlignment = VerticalAlignment.Bottom
@@ -160,17 +239,17 @@ namespace Demo_var_6.Pages
             ComboBox comboBoxFilt = new ComboBox()
             {
                 Width = 100,
-                Height = 50,
+                Height = 25,
                 FontSize = 16,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Bottom
 
             };
-            List<string> strings = DataBase.SearchUniqItems("Произовдитель");
+            List<string> strings = DataBase.SearchUniqItems("Производитель");
             foreach (string s in strings) {
                 comboBoxFilt.Items.Add(s);
             }
-            comboBoxPrice.SelectionChanged += (sender, e) => {
+            comboBoxFilt.SelectionChanged += (sender, e) => {
                 ComboBox? comboBox = sender as ComboBox;
                 if (comboBox == null) return;
                 IDatabaseService.manufacturerSort = comboBox.SelectedItem.ToString();

@@ -6,16 +6,21 @@ using System.Threading.Tasks;
 using System.Data.SqlClient;
 using System.Data;
 using System.Windows.Shapes;
+using System.Windows;
+using static Demo_var_6.Classes.IDatabaseService;
+using System.Reflection.PortableExecutable;
 
 namespace Demo_var_6.Classes
 {
     internal class DataBase : IDatabaseService
     {
-        
 
-        public static bool loginChecker(string login, string pass) {
+
+        public static bool loginChecker(string login, string pass)
+        {
             string query = $"SELECT COUNT(*) FROM Login.Пользователь WHERE Логин='{login}' AND Пароль='{pass}'";
-            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString)) {
+            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
+            {
 
                 connection.Open();
                 SqlCommand cmd = new SqlCommand(query, connection);
@@ -34,7 +39,8 @@ namespace Demo_var_6.Classes
         }
 
 
-        private static void RoleSearch(string login) {
+        private static void RoleSearch(string login)
+        {
             string query = "SELECT r.Название FROM Login.Пользователь as p " + "inner join Login.Роль as r on r.id = p.idРоли " + "WHERE Логин='@login'";
             using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
             {
@@ -48,16 +54,17 @@ namespace Demo_var_6.Classes
         private static void NameSearch(string login)
         {
             string query = $"SELECT ФИО FROM Login.Пользователь WHERE Логин='{login}'";
-            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString)) { 
+            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
+            {
                 connection.Open();
                 SqlCommand cmd = new SqlCommand(query, connection);
-                //cmd.Parameters.AddWithValue("@login", login);
                 IDatabaseService.Name = (string)cmd.ExecuteScalar();
                 connection.Close();
             }
         }
 
-        public static List<string> ColumnNameProducts() {
+        public static List<string> ColumnNameProducts()
+        {
             List<string> strings = new List<string>();
             var filter = new Dictionary<string, string>();
             string query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_NAME = 'Товар'";
@@ -75,15 +82,16 @@ namespace Demo_var_6.Classes
                 return strings;
             }
         }
-
-        public static List <IDatabaseService.Product> ProductData() {
+        //Message
+        public static List<IDatabaseService.Product> ProductData()
+        {
             var products = new List<IDatabaseService.Product>();
             string query = CreateQueryFilter();
             using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
             {
                 connection.Open();
                 SqlCommand cmd = new SqlCommand(query, connection);
-
+                //MessageBox.Show(query);
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
@@ -109,7 +117,8 @@ namespace Demo_var_6.Classes
             }
         }
 
-        private static string CreateQueryFilter() {
+        private static string CreateQueryFilter()
+        {
             string query = "select * from Login.Товар", querySub = " where ", queryFilter = "";
             if (IDatabaseService.queryFilter == null) return query;
             foreach (KeyValuePair<string, string> kvp in IDatabaseService.queryFilter)
@@ -126,37 +135,45 @@ namespace Demo_var_6.Classes
             return query + queryFilter + ManufacturerQuery(queryFilter) + QuerySearch(queryFilter) + SortingQuery();
         }
 
-        private static string ManufacturerQuery(string queryFilter) {
-            string? query = IDatabaseService.manufacturerSort, querySub = " where ", queryMan = " Производитель = ";
-            IDatabaseService.manufacturerSort = "";
-            if (query != "") return "";
+        private static string ManufacturerQuery(string queryFilter)
+        {
+            string? query = IDatabaseService.manufacturerSort, querySub = " where ", queryMan = " Производитель = ", queryNext = "";
+            //IDatabaseService.manufacturerSort = "";
+            if (query == "") return "";
             if (queryFilter.Contains("where"))
             {
-                return " and "  + queryMan + query;
+                //if (QuerySearch(queryFilter) != "") queryNext = " and ";
+                return " and " + queryMan + "'" + query + "'";// + queryNext;
             }
-            else {
-                return querySub + queryMan + query;
+            else
+            {
+                // if (QuerySearch(queryFilter) != "") queryNext = " and ";
+                return querySub + queryMan + "'" + query + "'"; //+ queryNext;
             }
             return "";
         }
 
-        private static string SortingQuery() {
+        private static string SortingQuery()
+        {
             string querySub = " order by Стоимость ", query = IDatabaseService.Sort;
-            IDatabaseService.Sort = "";
+            //IDatabaseService.Sort = "";
             if (query == "") return "";
             return querySub + query;
         }
 
-        private static string QuerySearch(string queryFilter) {
-            string query = "", querySub = " where ";
+        private static string QuerySearch(string queryFilter)
+        {
+            string query = "", querySub = " where ", queryEmpty = "";
             if (IDatabaseService.querySearch == null) return query;
+            if (ManufacturerQuery(queryFilter) != "") query += " and ";
             foreach (KeyValuePair<string, string> kvp in IDatabaseService.querySearch)
             {
-                
+
                 if (kvp.Value != null && kvp.Value != "")
                 {
-                    if (queryFilter.Contains("where")) querySub = "or";
-                    else {
+                    if (queryFilter.Contains("where") || ManufacturerQuery(queryFilter).Contains("where")) querySub = "and";
+                    else
+                    {
                         query += querySub;
                     }
                     if (query.Contains("like"))
@@ -164,45 +181,74 @@ namespace Demo_var_6.Classes
                         query += querySub;
                         query += $" {kvp.Key} like '%{kvp.Value}%' ";
                     }
-                    else {
-                        if (queryFilter != "") { query += " and"; }
+                    else
+                    {
+                        if (queryFilter != "" && ManufacturerQuery(queryFilter) != "") { query += " and"; }
                         query += " ( ";
                         query += $" {kvp.Key} like '%{kvp.Value}%' ";
                     }
                 }
             }
-            if (query != "") {
+            if (query.Length == 5) query = queryEmpty;
+            if (query != "")
+            {
                 query += ")";
             }
             return query;
         }
 
-        public static List<string> SearchUniqItems(string columnName) {
-            List <string> items = new List<string>();
-            string query = $"SELECT DISTINCT {columnName} from Login.Товар";
-            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString)) {
+        public static List<string> SearchUniqItems(string columnName)
+        {
+            List<string> items = new List<string>();
+            string query = $"SELECT DISTINCT [{columnName}] from Login.Товар";
+            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
+            {
+                connection.Open();
                 SqlCommand cmd = new SqlCommand(query, connection);
                 SqlDataReader reader = cmd.ExecuteReader();
                 while (reader.Read())
                 {
-                    switch (columnName) {
-                        case "Стоимость":
-                            items.Add((Decimal.ToDouble(reader.GetDecimal(0))).ToString());
-                            break;
-                        case "Скидка":
-                            items.Add(reader.GetInt32(0).ToString());
-                            break;
-                        case "[Кол-во на складе]":
-                            items.Add(reader.GetInt32(0).ToString());
-                            break;
-                        default:
-                            items.Add(reader.GetString(0));
-                            break;
-                    }
+                    items.Add(reader.GetString(0));
                 }
+                connection.Close();
             }
             return items;
         }
 
+        public static void AddData(IDatabaseService.Product product)
+        {
+            string query = $"insert into Login.Товар values ('{product.id}','{product.name}','{product.unit}','{product.price}','{product.sale}','{product.manufacturer}','{product.provider}','{product.category}','{product.sale}','{product.quantity}','{product.description}','{product.image}')";
+            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        public static void UpdData(IDatabaseService.Product product)
+        {
+            string query = $"update Login.Товар where Артикул = '{product.id}' set ('{product.id}','{product.name}','{product.unit}','{product.price}','{product.sale}','{product.manufacturer}','{product.provider}','{product.category}','{product.sale}','{product.quantity}','{product.description}','{product.image}')";
+            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
+
+        public static void DelData(IDatabaseService.Product product)
+        {
+            string query = $"delete Login.Товар where Артикул = '{product.id}'";
+            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
+            {
+                connection.Open();
+                SqlCommand cmd = new SqlCommand(query, connection);
+                cmd.ExecuteNonQuery();
+                connection.Close();
+            }
+        }
     }
 }
