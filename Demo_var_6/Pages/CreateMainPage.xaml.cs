@@ -24,7 +24,6 @@ namespace Demo_var_6.Pages
     {
         public PanelProducts panelProducts = new PanelProducts();
 
-        
         public CreateMainFilter()
         {
             InitializeComponent();
@@ -114,13 +113,19 @@ namespace Demo_var_6.Pages
         }
 
         private string SearchNameOfRadioButton() {
-            foreach (UIElement element in panelProducts.parentGrid.Children.)
+            foreach (UIElement element in panelProducts.parentGrid.Children)
             {
-                if (element is RadioButton radioButton && radioButton.GroupName == "Products" && radioButton.IsChecked == true)
-                {
-
-                    return radioButton.Name.ToString().Substring(1);
-
+                if (element is Border border) {
+                    DependencyObject child = VisualTreeHelper.GetChild(border, 0);
+                    //for (int i = 0; i < VisualTreeHelper.GetChildrenCount(border); i++) {
+                    if (child == null) continue;
+                    foreach (UIElement rb in (child as Grid).Children)
+                    {
+                        if (rb is RadioButton radioButton && radioButton.GroupName == "Products" && radioButton.IsChecked == true)
+                        {
+                            return radioButton.Name.ToString().Substring(1);
+                        }
+                    }
                 }
             }
             return "";
@@ -171,10 +176,10 @@ namespace Demo_var_6.Pages
 
         private void TextCh(object sender, EventArgs e)
         {
-            TextBox textBox = sender as TextBox;
+            TextBox? textBox = sender as TextBox;
             if (textBox == null) return;
 
-            Grid parentGrid = textBox.Parent as Grid;
+            Grid? parentGrid = textBox.Parent as Grid;
             if (parentGrid == null) return;
 
             ComboBox comboBox = FindChild<ComboBox>(parentGrid, "searchComboBox");
@@ -184,18 +189,18 @@ namespace Demo_var_6.Pages
             string? key = "[" + selectedItem.Content.ToString() + "]";
             if (key == null) return;
 
-            string? value;
+            
             if (IDatabaseService.querySearch == null)
             {
                 return;
             }
-            if (IDatabaseService.querySearch.TryGetValue(key, out value) && !string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(textBox.Text))
+
+            try {
+                IDatabaseService.querySearch.Add(key, textBox.Text);
+            }
+            catch 
             {
                 IDatabaseService.querySearch[key] = textBox.Text;
-            }
-            else
-            {
-                IDatabaseService.querySearch.Add(key, textBox.Text);
             }
 
             panelProducts.Render();
@@ -246,6 +251,7 @@ namespace Demo_var_6.Pages
 
             };
             List<string> strings = DataBase.SearchUniqItems("Производитель");
+            comboBoxFilt.Items.Add("---");
             foreach (string s in strings) {
                 comboBoxFilt.Items.Add(s);
             }

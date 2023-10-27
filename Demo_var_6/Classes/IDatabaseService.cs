@@ -36,7 +36,7 @@ namespace Demo_var_6.Classes
 
         public static string? manufacturerSort = "";
 
-        public static string connectionString = "Data Source=DESKTOP-36G6NKF;Initial Catalog=DemoEx;Integrated Security=True";
+        public static string connectionString = "Data Source=CRTAZ;Initial Catalog=Login;Integrated Security=True";
 
         public static List<Product>? products;
 

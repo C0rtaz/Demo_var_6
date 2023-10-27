@@ -137,9 +137,9 @@ namespace Demo_var_6.Classes
 
         private static string ManufacturerQuery(string queryFilter)
         {
-            string? query = IDatabaseService.manufacturerSort, querySub = " where ", queryMan = " Производитель = ", queryNext = "";
+            string? query = IDatabaseService.manufacturerSort, querySub = " where ", queryMan = " Производитель = ";
             //IDatabaseService.manufacturerSort = "";
-            if (query == "") return "";
+            if (query == "" || query == "---") return "";
             if (queryFilter.Contains("where"))
             {
                 //if (QuerySearch(queryFilter) != "") queryNext = " and ";
@@ -150,7 +150,7 @@ namespace Demo_var_6.Classes
                 // if (QuerySearch(queryFilter) != "") queryNext = " and ";
                 return querySub + queryMan + "'" + query + "'"; //+ queryNext;
             }
-            return "";
+            //return "";
         }
 
         private static string SortingQuery()
@@ -229,8 +229,9 @@ namespace Demo_var_6.Classes
 
         public static void UpdData(IDatabaseService.Product product)
         {
-            string query = $"update Login.Товар where Артикул = '{product.id}' set ('{product.id}','{product.name}','{product.unit}','{product.price}','{product.sale}','{product.manufacturer}','{product.provider}','{product.category}','{product.sale}','{product.quantity}','{product.description}','{product.image}')";
-            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString))
+            string query = $"UPDATE Login.Товар SET Наименование = '{product.name}', [Ед. измерения] = '{product.unit}', Стоимость = '{product.price}', [Кол-во на складе] = '{product.quantity}', Производитель = '{product.manufacturer}', Поставщик = '{product.provider}', Категория = '{product.category}', Скидка = '{product.sale}', Размер_максимально_возможной_скидки = '{product.sale}', Описание = '{product.description}', Изображение = '{(product.image == "" ? null : product.image)}' WHERE Артикул = '{product.id}'";
+
+            using (SqlConnection connection = new SqlConnection(IDatabaseService.connectionString)) 
             {
                 connection.Open();
                 SqlCommand cmd = new SqlCommand(query, connection);

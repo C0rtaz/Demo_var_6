@@ -32,6 +32,7 @@ namespace Demo_var_6.Forms
         public AddUpdDel()
         {
             InitializeComponent();
+            Init();
         }
 
         private void Init() {
@@ -40,16 +41,16 @@ namespace Demo_var_6.Forms
                 InitForAdd();
             }
             else {
-                InitForAdd();
+                InitForUPd();
             }
         }
 
         private void InitForAdd() {
-            System.Windows.Controls.Image? img = FindName("img") as System.Windows.Controls.Image;
             imgPath = IDatabaseService.defaultPath + IDatabaseService.defaultImage;
-            img.Source = new BitmapImage(new Uri(imgPath));
+            ((System.Windows.Controls.Image)FindName("img")).Source = new BitmapImage(new Uri(imgPath));
             prod = new IDatabaseService.Product();
         }
+
 
         private void InitForUPd() {
             (FindName("IDBox") as TextBox).Text = IDatabaseService.updProduct.id;
@@ -69,7 +70,7 @@ namespace Demo_var_6.Forms
             prod.id = (FindName("IDBox") as TextBox).Text;
             prod.name = (FindName("nameBox") as TextBox).Text ;
             prod.unit = (FindName("UnitBox") as TextBox).Text;
-            prod.price= Double.Parse((FindName("CostBox") as TextBox).Text);
+            prod.price = Double.Parse((FindName("CostBox") as TextBox).Text);
             prod.manufacturer = (FindName("ManBox") as TextBox).Text;
             prod.provider = (FindName("providerBox") as TextBox).Text;
             prod.category = (FindName("categoryBox") as TextBox).Text;
@@ -103,6 +104,7 @@ namespace Demo_var_6.Forms
                     DataBase.AddData(prod);
                 }
                 else {
+                    ProdFill();
                     DataBase.UpdData(prod);
                 }
                 Close();
